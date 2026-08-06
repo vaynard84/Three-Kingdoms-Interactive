@@ -248,34 +248,34 @@
       ]
     },
     {
-      "id": "ch16_northern_expeditions",
+      "id": "ch16_southern_northern_campaigns",
       "chapter_id": 16,
-      "title": "Ch 16: Northern Expeditions & Wooden Oxen",
-      "dialogue": "Zhuge Liang leads the Northern Expeditions across rugged Qinling mountains, inventing automated Wooden Oxen and Gliding Horses to haul grain across steep cliffs.",
+      "title": "Ch 16: The Southern Campaign & Northern Expeditions",
+      "dialogue": "After Liu Bei's death, Zhuge Liang must secure Shu's southern border before facing Wei in the north. He wants lasting peace, not endless fighting.",
       "choices": [
         {
-          "text": "Deploy Wooden Oxen transport supply convoys",
-          "next": "ch16_deploy_oxen"
+          "text": "Win Meng Huo's trust through patience and mercy",
+          "next": "ch16_win_trust"
         },
         {
-          "text": "Outmaneuver Sima Yi's defensive hill fortresses",
-          "next": "ch16_outmaneuver_sima"
+          "text": "Improve mountain supply routes with wooden transport carts",
+          "next": "ch16_improve_supplies"
         }
       ]
     },
     {
-      "id": "ch17_reunification_jin",
+      "id": "ch17_reunification",
       "chapter_id": 17,
-      "title": "Ch 17: The Great Unification",
-      "dialogue": "After decades of war, wisdom and peace triumph. Sima Yan establishes the Jin Dynasty, reuniting the land under a peaceful era of rebuilding and law.",
+      "title": "Ch 17: The Fall of the Three Kingdoms & Reunification",
+      "dialogue": "The three kingdoms are weakening after decades of struggle. Leaders must decide how to protect their people as the Jin Dynasty rises.",
       "choices": [
         {
-          "text": "Proclaim universal peace and rebuild farmland",
-          "next": "ch17_proclaim_peace"
+          "text": "Strengthen Jiange Pass and evacuate nearby families",
+          "next": "ch17_protect_jiange"
         },
         {
-          "text": "Establish royal libraries to preserve Three Kingdoms history",
-          "next": "ch17_preserve_history"
+          "text": "Offer fair surrender terms to reduce further suffering",
+          "next": "ch17_fair_terms"
         }
       ]
     }

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { MessageSquare, Send, Sparkles, BookOpen, Users, Swords, HelpCircle, ArrowRight, Bot, Compass, AlertCircle } from 'lucide-react';
-import { ASSETS } from '../data/assets';
 
 interface GuideResponse {
   answer: string;
@@ -117,26 +116,18 @@ export const AskGuidePage: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-16">
-      {/* Header Banner with Scholar Study Backdrop */}
-      <div className="relative overflow-hidden rounded-3xl border-2 border-amber-600/60 shadow-2xl p-8 space-y-3 text-center sm:text-left min-h-[220px] flex flex-col justify-center">
-        <div 
-          className="absolute inset-0 bg-cover bg-center opacity-30 transition-all" 
-          style={{ backgroundImage: `url(${ASSETS.scholarStudy})` }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-stone-950 via-stone-950/90 to-stone-950/80" />
-
-        <div className="relative z-10 space-y-3">
-          <div className="inline-flex items-center gap-2 bg-amber-900/90 border border-amber-500/60 text-amber-200 px-3.5 py-1 rounded-full text-xs font-semibold uppercase tracking-widest shadow-md">
-            <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
-            <span>AI Story Scholar Study</span>
-          </div>
-          <h1 className="font-serif-display font-black text-3xl sm:text-4xl text-amber-100 gold-gradient-text">
-            Ask the Three Kingdoms Story Guide
-          </h1>
-          <p className="text-sm text-amber-200/90 max-w-2xl leading-relaxed font-sans">
-            Curious about why a battle happened or who was the bravest hero? Ask any question and receive wise, child-friendly explanations from the historical scholar!
-          </p>
+      {/* Header Banner */}
+      <div className="bg-amber-950/80 p-8 rounded-3xl border border-amber-800/80 shadow-xl space-y-3 text-center sm:text-left">
+        <div className="inline-flex items-center gap-2 bg-amber-900/80 border border-amber-700/80 text-amber-300 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest">
+          <Sparkles className="w-4 h-4 text-amber-400" />
+          <span>AI-Powered Story Assistant</span>
         </div>
+        <h1 className="font-serif font-extrabold text-3xl sm:text-4xl text-amber-100">
+          Ask the Three Kingdoms Story Guide
+        </h1>
+        <p className="text-sm text-amber-200/90 max-w-2xl leading-relaxed">
+          Curious about why a battle happened or who was the bravest hero? Ask any question and get clear, child-friendly explanations!
+        </p>
       </div>
 
       {/* Preset Questions Chips */}

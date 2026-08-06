@@ -5,7 +5,6 @@ import { EVENTS } from '../data/events';
 import { CHARACTERS } from '../data/characters';
 import { HistoricalEvent, FactionId } from '../types';
 import { RelationshipDiagram } from '../components/RelationshipDiagram';
-import { ASSETS } from '../data/assets';
 
 export const EventExplorerPage: React.FC = () => {
   const location = useLocation();
@@ -48,25 +47,17 @@ export const EventExplorerPage: React.FC = () => {
   return (
     <div className="space-y-8 pb-16">
       {/* Header Banner */}
-      <div className="relative overflow-hidden rounded-3xl border-2 border-amber-600/60 shadow-2xl p-8 space-y-3">
-        <div 
-          className="absolute inset-0 bg-cover bg-center opacity-30 transition-all" 
-          style={{ backgroundImage: `url(${ASSETS.mapScroll})` }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-stone-950 via-stone-950/90 to-stone-950/80" />
-
-        <div className="relative z-10 space-y-3">
-          <div className="inline-flex items-center gap-2 bg-amber-900/90 border border-amber-500/60 text-amber-200 px-3.5 py-1 rounded-full text-xs font-semibold uppercase tracking-widest shadow-md">
-            <Swords className="w-4 h-4 text-amber-400" />
-            <span>Event & Battle Explorer</span>
-          </div>
-          <h1 className="font-serif-display font-black text-3xl sm:text-4xl text-amber-100 gold-gradient-text">
-            Major Historic Campaigns
-          </h1>
-          <p className="text-sm text-amber-200/90 max-w-2xl leading-relaxed font-sans">
-            From the fiery naval clash at Red Cliffs to the secret food depot raid at Guandu, explore the turning points that reshaped China.
-          </p>
+      <div className="bg-amber-950/80 p-8 rounded-3xl border border-amber-800/80 shadow-xl space-y-3">
+        <div className="inline-flex items-center gap-2 bg-amber-900/80 border border-amber-700/80 text-amber-300 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest">
+          <Swords className="w-4 h-4 text-amber-400" />
+          <span>Event & Battle Explorer</span>
         </div>
+        <h1 className="font-serif font-extrabold text-3xl sm:text-4xl text-amber-100">
+          Major Historic Campaigns
+        </h1>
+        <p className="text-sm text-amber-200/90 max-w-2xl leading-relaxed">
+          From the fiery naval clash at Red Cliffs to the secret food depot raid at Guandu, explore the turning points that reshaped China.
+        </p>
       </div>
 
       {/* Main Two-Column Layout */}

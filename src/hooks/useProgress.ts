@@ -25,16 +25,7 @@ export function useProgress() {
     try {
       const saved = localStorage.getItem('3k_storybook_progress_v1');
       if (saved) {
-        const parsed = JSON.parse(saved);
-        // Ensure legacy or corrupted data structures migrate cleanly
-        return {
-          ...INITIAL_PROGRESS,
-          ...parsed,
-          completedChapters: Array.isArray(parsed.completedChapters) ? parsed.completedChapters.filter((id: any) => typeof id === 'number') : [],
-          bookmarkedChapters: Array.isArray(parsed.bookmarkedChapters) ? parsed.bookmarkedChapters.filter((id: any) => typeof id === 'number') : [],
-          favoriteCharacterIds: Array.isArray(parsed.favoriteCharacterIds) ? parsed.favoriteCharacterIds.filter((id: any) => typeof id === 'string') : [],
-          unlockedBadgeIds: Array.isArray(parsed.unlockedBadgeIds) ? parsed.unlockedBadgeIds.filter((id: any) => typeof id === 'string') : ['first-chapter']
-        };
+        return { ...INITIAL_PROGRESS, ...JSON.parse(saved) };
       }
     } catch {
       // Ignore JSON error

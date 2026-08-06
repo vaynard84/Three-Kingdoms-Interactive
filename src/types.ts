@@ -13,12 +13,6 @@ export interface ChapterQuiz {
   correctOptionId: string;
 }
 
-export interface ChapterProvenance {
-  novelRef: string;
-  historicalRecordsRef: string;
-  primarySourceText?: string;
-}
-
 export interface Chapter {
   id: number;
   title: string;
@@ -33,7 +27,6 @@ export interface Chapter {
   quiz: ChapterQuiz;
   suggestedQuestions: string[];
   yearOrEra: string;
-  provenance?: ChapterProvenance;
 }
 
 export interface CharacterRelationship {
@@ -157,24 +150,42 @@ export interface AchievementBadge {
   unlockedAt?: string;
 }
 
+export type StoryChoiceAction =
+  | 'continue'
+  | 'next-branch'
+  | 'restart-branch'
+  | 'choose-branch'
+  | 'read-chapter';
+
 export interface StoryChoice {
   text: string;
   next: string;
+  action?: StoryChoiceAction;
 }
 
 export interface StoryBranch {
   id: string;
+  chapter_id: number;
   title: string;
   dialogue: string;
   choices: StoryChoice[];
 }
 
+export interface StoryHistoryEntry {
+  sceneId: string;
+  userChoice: string;
+  choiceNext: string;
+  outcome: string;
+}
+
 export interface InteractiveScene {
+  scene_id: string;
   outcome: string;
   historical_context: string;
   next_scene_title: string;
   dialogue: string;
   choices: StoryChoice[];
+  is_conclusion?: boolean;
 }
 
 export interface UserProgress {

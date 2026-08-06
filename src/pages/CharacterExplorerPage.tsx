@@ -4,53 +4,6 @@ import { Users, Search, Heart, Star, BookOpen, Shield, Sword, Crown, Scroll, Spa
 import { CHARACTERS } from '../data/characters';
 import { Character, FactionId, CharacterRole } from '../types';
 import { useProgress } from '../hooks/useProgress';
-import { ASSETS } from '../data/assets';
-
-// Faction frame visual themes according to storybook guidelines
-const getFactionFrame = (faction: FactionId) => {
-  switch (faction) {
-    case 'Wei':
-      return {
-        bg: 'bg-gradient-to-br from-blue-950 via-slate-900 to-indigo-950',
-        border: 'border-blue-500/70',
-        badge: 'bg-blue-900/90 text-blue-200 border-blue-400',
-        accent: 'text-blue-300',
-        emblem: '魏'
-      };
-    case 'Shu':
-      return {
-        bg: 'bg-gradient-to-br from-emerald-950 via-stone-900 to-teal-950',
-        border: 'border-emerald-500/70',
-        badge: 'bg-emerald-900/90 text-emerald-200 border-emerald-400',
-        accent: 'text-emerald-300',
-        emblem: '蜀'
-      };
-    case 'Wu':
-      return {
-        bg: 'bg-gradient-to-br from-red-950 via-stone-900 to-amber-950',
-        border: 'border-rose-500/70',
-        badge: 'bg-rose-900/90 text-rose-200 border-rose-400',
-        accent: 'text-rose-300',
-        emblem: '吳'
-      };
-    case 'Han':
-      return {
-        bg: 'bg-gradient-to-br from-amber-950 via-stone-900 to-yellow-950',
-        border: 'border-amber-400/80',
-        badge: 'bg-amber-900/90 text-amber-200 border-amber-400',
-        accent: 'text-amber-300',
-        emblem: '漢'
-      };
-    default:
-      return {
-        bg: 'bg-gradient-to-br from-purple-950 via-stone-900 to-stone-950',
-        border: 'border-purple-500/70',
-        badge: 'bg-purple-900/90 text-purple-200 border-purple-400',
-        accent: 'text-purple-300',
-        emblem: '群'
-      };
-  }
-};
 
 export const CharacterExplorerPage: React.FC = () => {
   const location = useLocation();
@@ -180,23 +133,22 @@ export const CharacterExplorerPage: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredCharacters.map(char => {
           const isFav = progress.favoriteCharacterIds.includes(char.id);
-          const frame = getFactionFrame(char.faction);
 
           return (
             <div
               key={char.id}
               onClick={() => setActiveCharacter(char)}
-              className={`relative overflow-hidden rounded-3xl p-6 border-2 shadow-xl transition-all transform hover:-translate-y-1 cursor-pointer flex flex-col justify-between space-y-4 ${frame.bg} ${frame.border}`}
+              className="bg-amber-950/80 hover:bg-amber-900/90 border border-amber-800/80 hover:border-amber-500 rounded-3xl p-6 shadow-xl transition-all transform hover:-translate-y-1 cursor-pointer flex flex-col justify-between space-y-4"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <span className="text-4xl p-2 bg-stone-950/80 rounded-2xl border border-amber-700/60 shadow-inner">
+                    <span className="text-4xl p-2 bg-stone-900/80 rounded-2xl border border-amber-800 shadow-inner">
                       {char.avatarSymbol}
                     </span>
                     <div>
                       <h3 className="font-serif font-bold text-amber-100 text-lg leading-tight">{char.name}</h3>
-                      <p className={`text-xs font-serif ${frame.accent}`}>{char.nameChinese}</p>
+                      <p className="text-xs text-amber-400 font-serif">{char.nameChinese}</p>
                     </div>
                   </div>
 
@@ -206,29 +158,35 @@ export const CharacterExplorerPage: React.FC = () => {
                       toggleFavoriteCharacter(char.id);
                     }}
                     className={`p-2 rounded-xl transition-all ${
-                      isFav ? 'text-amber-400 bg-stone-900/80' : 'text-stone-400 hover:text-amber-300'
+                      isFav ? 'text-amber-400 bg-amber-900/60' : 'text-amber-600 hover:text-amber-300'
                     }`}
                   >
-                    <Heart className={`w-5 h-5 ${isFav ? 'fill-amber-400 text-amber-400' : ''}`} />
+                    <Heart className={`w-5 h-5 ${isFav ? 'fill-amber-400' : ''}`} />
                   </button>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold border uppercase tracking-wider ${frame.badge}`}>
-                    {frame.emblem} {char.faction} Kingdom
+                  <span className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold border ${
+                    char.faction === 'Shu' ? 'bg-emerald-900 text-emerald-200 border-emerald-700' :
+                    char.faction === 'Wei' ? 'bg-blue-900 text-blue-200 border-blue-700' :
+                    char.faction === 'Wu' ? 'bg-red-900 text-red-200 border-red-700' :
+                    char.faction === 'Han' ? 'bg-amber-900 text-amber-200 border-amber-700' :
+                    'bg-purple-900 text-purple-200 border-purple-700'
+                  }`}>
+                    {char.faction} Kingdom
                   </span>
-                  <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-stone-900/90 text-amber-300 border border-amber-700/60">
+                  <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-stone-900 text-amber-300 border border-amber-800">
                     {char.role}
                   </span>
                 </div>
 
-                <p className="text-xs text-amber-100/90 leading-relaxed line-clamp-3 font-sans">
+                <p className="text-xs text-amber-200/90 leading-relaxed line-clamp-3">
                   {char.personality}
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-amber-800/40 flex items-center justify-between text-xs font-semibold text-amber-300">
-                <span>View Full Profile & Biography</span>
+              <div className="pt-4 border-t border-amber-900/80 flex items-center justify-between text-xs font-semibold text-amber-400">
+                <span>View Full Profile</span>
                 <ChevronRight className="w-4 h-4" />
               </div>
             </div>

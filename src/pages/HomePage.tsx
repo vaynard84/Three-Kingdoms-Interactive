@@ -6,24 +6,12 @@ import { CHAPTERS } from '../data/chapters';
 import { CHARACTERS } from '../data/characters';
 import { EVENTS } from '../data/events';
 import { DAILY_FACTS } from '../data/dailyFacts';
-import { ASSETS } from '../data/assets';
+import { STORY_BRANCHES } from '../data/storyBranches';
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const { progress } = useProgress();
   const [quickQuestion, setQuickQuestion] = useState('');
-  const [homeBranches, setHomeBranches] = useState<any[]>([]);
-
-  React.useEffect(() => {
-    fetch('/metadata.json')
-      .then(res => res.json())
-      .then(data => {
-        if (data && Array.isArray(data.branches) && data.branches.length > 0) {
-          setHomeBranches(data.branches);
-        }
-      })
-      .catch(() => {});
-  }, []);
 
   // Daily Fact based on today's day
   const todayIndex = new Date().getDate() % DAILY_FACTS.length;
@@ -54,52 +42,52 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className="space-y-12 pb-12">
-      {/* Hero Banner with Layered Art Scene */}
-      <section className="relative overflow-hidden rounded-3xl border-2 border-amber-600/60 shadow-2xl min-h-[460px] flex items-center">
-        {/* Background Image Artwork */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 transform scale-105" 
-          style={{ backgroundImage: `url(${ASSETS.heroScene})` }}
-        />
-        {/* Atmospheric Ink-wash Gradient Overlays for Readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-stone-950/95 via-stone-950/80 to-stone-900/60" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(217,119,6,0.25),transparent_70%)]" />
-
-        {/* Decorative Stamp Seal */}
-        <div className="absolute top-6 right-6 opacity-20 text-6xl sm:text-8xl font-chinese font-bold text-amber-200 select-none pointer-events-none">
+      {/* Hero Banner */}
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-950 via-stone-900 to-red-950 text-amber-100 border-2 border-amber-800/80 shadow-2xl p-8 sm:p-12 lg:p-16">
+        {/* Background decorative artwork texture */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(217,119,6,0.2),transparent_60%)] pointer-events-none" />
+        <div className="absolute -right-12 -bottom-12 opacity-10 text-[200px] font-serif font-bold text-amber-200 select-none pointer-events-none">
           三国
         </div>
 
-        <div className="relative z-10 p-8 sm:p-12 lg:p-16 max-w-3xl space-y-6">
-          <div className="inline-flex items-center gap-2 bg-amber-900/90 border border-amber-500/60 text-amber-200 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest shadow-lg backdrop-blur-sm">
-            <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
-            <span>Interactive Children's Historical Epic</span>
+        <div className="relative z-10 max-w-3xl space-y-6">
+          <div className="inline-flex items-center gap-2 bg-amber-900/80 border border-amber-700/80 text-amber-300 px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest shadow-sm">
+            <Sparkles className="w-4 h-4 text-amber-400" />
+            <span>Interactive Children's Epic</span>
           </div>
 
-          <h1 className="font-serif-display font-black text-4xl sm:text-5xl lg:text-6xl text-amber-100 leading-tight tracking-wide drop-shadow-lg">
+          <h1 className="font-serif font-extrabold text-4xl sm:text-5xl lg:text-6xl text-amber-100 leading-tight tracking-wide drop-shadow-md">
             The Three Kingdoms: <br />
-            <span className="gold-gradient-text">An Interactive Adventure</span>
+            <span className="text-amber-400">An Interactive Adventure</span>
           </h1>
 
-          <p className="text-base sm:text-lg text-amber-200/95 leading-relaxed font-sans max-w-2xl drop-shadow">
+          <p className="text-base sm:text-lg text-amber-200/90 leading-relaxed font-sans">
             Step into ancient China! Join sworn heroes, clever strategists, and ambitious rulers in the grandest story of courage, friendship, and wisdom ever told.
           </p>
 
           <div className="flex flex-wrap items-center gap-4 pt-2">
             <button
-              onClick={() => navigate('/story')}
-              className="flex items-center gap-2.5 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-stone-950 font-bold px-7 py-3.5 rounded-2xl text-base shadow-xl border border-amber-300 transition-all transform hover:-translate-y-0.5 cursor-pointer"
+              onClick={() => navigate('/story', { state: { tab: 'interactive' } })}
+              className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-amber-950 font-bold px-6 py-3.5 rounded-xl text-base shadow-lg hover:shadow-amber-500/20 flex items-center gap-2 transition-all transform hover:-translate-y-0.5 cursor-pointer"
             >
-              <Play className="w-5 h-5 fill-stone-950" />
-              <span>Begin the Adventure</span>
+              <Play className="w-5 h-5 fill-amber-950" />
+              <span>Interactive AI Story Branches</span>
             </button>
 
             <button
-              onClick={() => navigate('/story', { state: { chapterId: progress.lastReadChapterId } })}
-              className="flex items-center gap-2 bg-stone-900/90 hover:bg-stone-800 text-amber-200 font-semibold px-6 py-3.5 rounded-2xl text-base border border-amber-600/70 shadow-lg backdrop-blur-sm transition-all cursor-pointer"
+              onClick={() => navigate('/story', { state: { tab: 'chapters' } })}
+              className="bg-amber-900/80 hover:bg-amber-800 text-amber-100 font-semibold px-5 py-3.5 rounded-xl text-sm border border-amber-700 flex items-center gap-2 transition-all cursor-pointer"
             >
-              <BookOpen className="w-5 h-5 text-amber-400" />
-              <span>Continue Ch. {progress.lastReadChapterId}</span>
+              <BookOpen className="w-4 h-4 text-amber-400" />
+              <span>Read Chapters (1–{CHAPTERS.length})</span>
+            </button>
+
+            <button
+              onClick={() => navigate('/ask')}
+              className="bg-stone-900/80 hover:bg-stone-800 text-amber-200 px-5 py-3.5 rounded-xl text-sm border border-amber-800/80 flex items-center gap-2 transition-all cursor-pointer"
+            >
+              <MessageSquare className="w-4 h-4 text-amber-400" />
+              <span>Ask Story Guide</span>
             </button>
           </div>
         </div>
@@ -123,7 +111,7 @@ export const HomePage: React.FC = () => {
           <div className="w-full md:w-48 bg-amber-900/60 rounded-full h-3 border border-amber-800 overflow-hidden">
             <div
               className="bg-gradient-to-r from-amber-500 to-amber-400 h-full rounded-full transition-all duration-500"
-              style={{ width: `${(progress.completedChapters.length / 15) * 100}%` }}
+              style={{ width: `${(progress.completedChapters.length / CHAPTERS.length) * 100}%` }}
             />
           </div>
           <button
@@ -208,38 +196,7 @@ export const HomePage: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {(homeBranches.length > 0 ? homeBranches.slice(0, 6) : [
-            {
-              id: "ch3_peach_garden",
-              chapter_id: 3,
-              title: "Ch 3: The Oath of the Peach Garden",
-              dialogue: "In Zhang Fei's blooming peach orchard, Liu Bei, Guan Yu, and Zhang Fei raise their cups and vow to stand as brothers forever.",
-              choices: [
-                { text: "Swear the sacred brotherly oath" },
-                { text: "Forge three legendary weapons together" }
-              ]
-            },
-            {
-              id: "ch12_thatch_hut",
-              chapter_id: 12,
-              title: "Ch 12: Three Visits in the Snow",
-              dialogue: "Snowflakes cover Longzhong. Zhuge Liang is napping peacefully inside his cottage. Liu Bei stands quietly in the cold courtyard.",
-              choices: [
-                { text: "Wait patiently until Zhuge Liang wakes up" },
-                { text: "Leave a polite handwritten note expressing your hope" }
-              ]
-            },
-            {
-              id: "ch14_red_cliffs",
-              chapter_id: 14,
-              title: "Ch 14: Battle of Red Cliffs",
-              dialogue: "Cao Cao's warships are locked together with iron chains on the Yangtze River. The southeast wind begins to blow strongly!",
-              choices: [
-                { text: "Send Huang Gai's straw fire-ships with the wind" },
-                { text: "Use straw boats in the morning fog to borrow arrows" }
-              ]
-            }
-          ]).map((b, idx) => (
+          {STORY_BRANCHES.slice(0, 6).map((b, idx) => (
             <div
               key={b.id || idx}
               onClick={() => navigate('/story', { state: { tab: 'interactive', branchId: b.id } })}

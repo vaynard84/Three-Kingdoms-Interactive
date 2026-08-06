@@ -139,16 +139,6 @@ export const TIMELINE: TimelineEntry[] = [
     chapterId: 16
   },
   {
-    id: "tl-14",
-    year: "227–234 AD",
-    yearNumber: 227,
-    title: "Zhuge Liang's Northern Expeditions",
-    shortSummary: "Zhuge Liang leads military expeditions across Qinling mountains, inventing Wooden Oxen to solve mountain supply logistics.",
-    faction: "Shu",
-    eventId: "northern-expeditions",
-    chapterId: 16
-  },
-  {
     id: "tl-13",
     year: "229 AD",
     yearNumber: 229,
@@ -156,6 +146,16 @@ export const TIMELINE: TimelineEntry[] = [
     shortSummary: "Sun Quan crowns himself Emperor of Eastern Wu, formalizing the Three Kingdoms.",
     faction: "Wu",
     chapterId: 15
+  },
+  {
+    id: "tl-14",
+    year: "227–234 AD",
+    yearNumber: 227,
+    title: "Zhuge Liang's Northern Expeditions",
+    shortSummary: "Zhuge Liang leads six military expeditions against Wei, engaging in tactical duels with Sima Yi.",
+    faction: "Shu",
+    eventId: "northern-expeditions",
+    chapterId: 16
   },
   {
     id: "tl-gaoping",

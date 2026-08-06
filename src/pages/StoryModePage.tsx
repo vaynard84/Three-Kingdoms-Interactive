@@ -23,39 +23,19 @@ import {
 } from 'lucide-react';
 import { CHAPTERS } from '../data/chapters';
 import { CHARACTERS } from '../data/characters';
+import { STORY_BRANCHES } from '../data/storyBranches';
 import { useProgress } from '../hooks/useProgress';
-import { StoryBranch, StoryChoice, InteractiveScene } from '../types';
-
-// Default metadata branches fallback if metadata fetch fails
-const DEFAULT_BRANCHES: StoryBranch[] = [
-  {
-    id: "peach_garden",
-    title: "The Oath of the Peach Garden",
-    dialogue: "Liu Bei, Guan Yu, and Zhang Fei meet in a garden of pink blossoms. They want to help the world together.",
-    choices: [
-      { text: "Make the Promise", next: "three_heroes_born" },
-      { text: "Ask about their dreams", next: "dream_dialogue" }
-    ]
-  },
-  {
-    id: "thatch_hut",
-    title: "The Three Visits",
-    dialogue: "It is snowing, and the great advisor Zhuge Liang is napping inside. What should the brothers do?",
-    choices: [
-      { text: "Wait patiently in the snow", next: "zhuge_joins" },
-      { text: "Knock loudly on the door", next: "cranky_zhuge" }
-    ]
-  },
-  {
-    id: "straw_boats",
-    title: "The Clever Plan",
-    dialogue: "The army needs arrows! Zhuge Liang suggests 'borrowing' them from the enemy using boats covered in straw.",
-    choices: [
-      { text: "Beat the drums louder", next: "more_arrows" },
-      { text: "Sail closer to the enemy", next: "risky_move" }
-    ]
-  }
-];
+import {
+  InteractiveScene,
+  StoryBranch,
+  StoryChoice,
+  StoryHistoryEntry
+} from '../types';
+import {
+  MAX_STORY_DECISIONS,
+  createLocalContinuation,
+  normalizeGeneratedScene
+} from '../services/interactiveStory';
 
 export const StoryModePage: React.FC = () => {
   const location = useLocation();
@@ -66,78 +46,13 @@ export const StoryModePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'chapters' | 'interactive'>('chapters');
 
   // Interactive Branching State
-  const [initialBranches, setInitialBranches] = useState<StoryBranch[]>(DEFAULT_BRANCHES);
-  const [selectedBranch, setSelectedBranch] = useState<StoryBranch>(DEFAULT_BRANCHES[0]);
+  const initialBranches = STORY_BRANCHES;
+  const [selectedBranch, setSelectedBranch] = useState<StoryBranch>(STORY_BRANCHES[0]);
   const [currentScene, setCurrentScene] = useState<InteractiveScene | null>(null);
-  const [choiceHistory, setChoiceHistory] = useState<{ userChoice: string; outcome: string }[]>([]);
+  const [choiceHistory, setChoiceHistory] = useState<StoryHistoryEntry[]>([]);
   const [isGeneratingStory, setIsGeneratingStory] = useState<boolean>(false);
+  const [storyError, setStoryError] = useState<string | null>(null);
   const [selectedChapterFilter, setSelectedChapterFilter] = useState<number | 'all'>('all');
-
-  // Load branches from metadata.json on mount & handle location state
-  useEffect(() => {
-    fetch('/metadata.json')
-      .then(res => res.json())
-      .then(data => {
-        let loadedBranches = DEFAULT_BRANCHES;
-        if (data && Array.isArray(data.branches) && data.branches.length > 0) {
-          loadedBranches = data.branches;
-          setInitialBranches(data.branches);
-        }
-
-        // Check location state for tab & branchId
-        const state = location.state as { tab?: 'chapters' | 'interactive'; branchId?: string } | null;
-        if (state?.tab) {
-          setActiveTab(state.tab);
-        }
-        if (state?.branchId) {
-          const match = loadedBranches.find(b => b.id === state.branchId);
-          if (match) {
-            setSelectedBranch(match);
-          }
-        }
-      })
-      .catch(err => {
-        console.warn("Could not fetch metadata branches, using defaults:", err);
-        const state = location.state as { tab?: 'chapters' | 'interactive'; branchId?: string } | null;
-        if (state?.tab) setActiveTab(state.tab);
-        if (state?.branchId) {
-          const match = DEFAULT_BRANCHES.find(b => b.id === state.branchId);
-          if (match) setSelectedBranch(match);
-        }
-      });
-  }, [location.state]);
-
-  // Handle branch selection reset
-  const handleSelectBranch = (branch: StoryBranch) => {
-    setSelectedBranch(branch);
-    setCurrentScene(null);
-    setChoiceHistory([]);
-  };
-
-  // Handle choice submission
-  const handleMakeChoice = async (choice: StoryChoice) => {
-    setIsGeneratingStory(true);
-    try {
-      const response = await fetch('/api/story/continue', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          current_branch_id: selectedBranch.id,
-          choice_text: choice.text,
-          history: choiceHistory
-        })
-      });
-      if (response.ok) {
-        const data: InteractiveScene = await response.json();
-        setCurrentScene(data);
-        setChoiceHistory(prev => [...prev, { userChoice: choice.text, outcome: data.outcome }]);
-      }
-    } catch (err) {
-      console.error("Story choice generation error:", err);
-    } finally {
-      setIsGeneratingStory(false);
-    }
-  };
 
   // Determine active chapter from location state or progress
   const [currentChapterId, setCurrentChapterId] = useState<number>(() => {
@@ -154,6 +69,125 @@ export const StoryModePage: React.FC = () => {
   const chapter = CHAPTERS.find(c => c.id === currentChapterId) || CHAPTERS[0];
   const isBookmarked = progress.bookmarkedChapters.includes(chapter.id);
   const isCompleted = progress.completedChapters.includes(chapter.id);
+
+  // Apply navigation state when arriving from the home page or another explorer.
+  useEffect(() => {
+    const state = location.state as { tab?: 'chapters' | 'interactive'; branchId?: string } | null;
+    if (state?.tab) setActiveTab(state.tab);
+    if (state?.branchId) {
+      const match = STORY_BRANCHES.find(branch => branch.id === state.branchId);
+      if (match) {
+        setSelectedBranch(match);
+        setSelectedChapterFilter(match.chapter_id);
+      }
+    }
+  }, [location.state]);
+
+  const handleSelectBranch = (branch: StoryBranch) => {
+    setSelectedBranch(branch);
+    setCurrentScene(null);
+    setChoiceHistory([]);
+    setStoryError(null);
+  };
+
+  const moveToNextBranch = () => {
+    const currentIndex = initialBranches.findIndex(branch => branch.id === selectedBranch.id);
+    const nextBranch = initialBranches[currentIndex + 1] ?? initialBranches[0];
+    setSelectedChapterFilter(nextBranch.chapter_id);
+    handleSelectBranch(nextBranch);
+    requestAnimationFrame(() => {
+      document.getElementById('active-interactive-scene')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  };
+
+  const handleStoryAction = (choice: StoryChoice): boolean => {
+    switch (choice.action) {
+      case 'next-branch':
+        moveToNextBranch();
+        return true;
+      case 'restart-branch':
+        handleSelectBranch(selectedBranch);
+        return true;
+      case 'choose-branch':
+        handleSelectBranch(selectedBranch);
+        setSelectedChapterFilter('all');
+        requestAnimationFrame(() => {
+          document.getElementById('interactive-branch-selector')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        return true;
+      case 'read-chapter':
+        setCurrentChapterId(selectedBranch.chapter_id);
+        setActiveTab('chapters');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return true;
+      default:
+        return false;
+    }
+  };
+
+  // Continue through the server when available. The same validated local
+  // continuation is used when the network or AI service is unavailable.
+  const handleMakeChoice = async (choice: StoryChoice) => {
+    if (handleStoryAction(choice)) return;
+
+    setIsGeneratingStory(true);
+    setStoryError(null);
+
+    const requestContext = {
+      currentBranchId: selectedBranch.id,
+      chapterId: selectedBranch.chapter_id,
+      currentSceneId: currentScene?.scene_id,
+      choiceText: choice.text,
+      choiceNext: choice.next,
+      history: choiceHistory
+    };
+
+    let nextScene: InteractiveScene;
+
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 12000);
+
+    try {
+      const response = await fetch('/api/story/continue', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
+        body: JSON.stringify({
+          current_branch_id: requestContext.currentBranchId,
+          chapter_id: requestContext.chapterId,
+          current_scene_id: requestContext.currentSceneId,
+          choice_text: requestContext.choiceText,
+          choice_next: requestContext.choiceNext,
+          history: requestContext.history
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Story continuation failed with status ${response.status}`);
+      }
+
+      const data: unknown = await response.json();
+      nextScene = normalizeGeneratedScene(data, requestContext);
+    } catch (err) {
+      console.error('Story choice generation error:', err);
+      nextScene = createLocalContinuation(requestContext);
+      setStoryError('The online Story Guide could not be reached, so the built-in story path continued your adventure safely.');
+    } finally {
+      window.clearTimeout(timeoutId);
+      setIsGeneratingStory(false);
+    }
+
+    setCurrentScene(nextScene);
+    setChoiceHistory(prev => [
+      ...prev,
+      {
+        sceneId: nextScene.scene_id,
+        userChoice: choice.text,
+        choiceNext: choice.next,
+        outcome: nextScene.outcome
+      }
+    ]);
+  };
 
   // Update read progress when chapter opens
   useEffect(() => {
@@ -247,7 +281,7 @@ export const StoryModePage: React.FC = () => {
       {activeTab === 'interactive' ? (
         <div className="space-y-8">
           {/* Branch Selector Header */}
-          <div className="bg-amber-950/90 p-6 rounded-3xl border border-amber-800/80 shadow-xl space-y-4">
+          <div id="interactive-branch-selector" className="bg-amber-950/90 p-6 rounded-3xl border border-amber-800/80 shadow-xl space-y-4 scroll-mt-24">
             <div className="flex items-center gap-3">
               <div className="p-3 bg-amber-900 rounded-2xl border border-amber-700 text-amber-300">
                 <Sparkles className="w-6 h-6" />
@@ -278,7 +312,7 @@ export const StoryModePage: React.FC = () => {
                   onChange={(e) => setSelectedChapterFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))}
                   className="bg-amber-950 border border-amber-700 text-amber-100 text-xs font-semibold px-3 py-1.5 rounded-xl cursor-pointer focus:outline-none"
                 >
-                  <option value="all">🌟 All {CHAPTERS.length} Chapters (Interactive)</option>
+                  <option value="all">🌟 All {initialBranches.length} Chapters (Interactive)</option>
                   {CHAPTERS.map((c) => (
                     <option key={c.id} value={c.id}>
                       Chapter {c.id}: {c.title.replace(/^\d+\.\s*/, '')}
@@ -289,7 +323,7 @@ export const StoryModePage: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-80 overflow-y-auto pr-1">
                 {initialBranches
-                  .filter((b) => selectedChapterFilter === 'all' || (b as any).chapter_id === selectedChapterFilter)
+                  .filter((b) => selectedChapterFilter === 'all' || b.chapter_id === selectedChapterFilter)
                   .map((b) => (
                     <button
                       key={b.id}
@@ -302,7 +336,7 @@ export const StoryModePage: React.FC = () => {
                     >
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-[10px] bg-amber-900/80 border border-amber-700/80 text-amber-300 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
-                          {(b as any).chapter_id ? `Chapter ${(b as any).chapter_id}` : 'Branch'}
+                          Chapter {b.chapter_id}
                         </span>
                         {selectedBranch.id === b.id && (
                           <span className="text-[10px] bg-amber-400 text-amber-950 font-extrabold px-1.5 py-0.5 rounded">
@@ -323,11 +357,13 @@ export const StoryModePage: React.FC = () => {
           </div>
 
           {/* Active Interactive Decision Stage */}
-          <div className="bg-gradient-to-b from-stone-900 via-amber-950/80 to-stone-900 rounded-3xl border-2 border-amber-700/80 p-6 sm:p-10 shadow-2xl space-y-8">
+          <div id="active-interactive-scene" className="bg-gradient-to-b from-stone-900 via-amber-950/80 to-stone-900 rounded-3xl border-2 border-amber-700/80 p-6 sm:p-10 shadow-2xl space-y-8 scroll-mt-24">
             <div className="border-b border-amber-800/60 pb-4 flex items-center justify-between">
               <div>
                 <span className="text-xs bg-amber-900/80 border border-amber-700 text-amber-300 px-3 py-1 rounded-full font-bold uppercase tracking-widest">
-                  Active Scene
+                  {currentScene?.is_conclusion
+                    ? 'Branch Complete'
+                    : `Decision ${Math.min(choiceHistory.length + 1, MAX_STORY_DECISIONS)} of ${MAX_STORY_DECISIONS}`}
                 </span>
                 <h3 className="font-serif font-extrabold text-2xl sm:text-3xl text-amber-100 mt-2">
                   {currentScene ? currentScene.next_scene_title : selectedBranch.title}
@@ -345,6 +381,12 @@ export const StoryModePage: React.FC = () => {
               )}
             </div>
 
+            {storyError && (
+              <div role="status" aria-live="polite" className="bg-sky-950/70 p-4 rounded-2xl border border-sky-700 text-sky-100 text-sm">
+                <strong>Built-in story mode:</strong> {storyError}
+              </div>
+            )}
+
             {/* Historical Context or Narration */}
             {currentScene?.historical_context && (
               <div className="bg-amber-900/40 p-4 rounded-2xl border-l-4 border-amber-400 text-amber-200 text-sm font-serif italic">
@@ -354,7 +396,7 @@ export const StoryModePage: React.FC = () => {
 
             {/* Outcome narrative from last choice */}
             {currentScene?.outcome && (
-              <div className="bg-gradient-to-r from-amber-950 via-red-950/50 to-amber-950 p-6 rounded-2xl border border-amber-600/80 space-y-2">
+              <div aria-live="polite" className="bg-gradient-to-r from-amber-950 via-red-950/50 to-amber-950 p-6 rounded-2xl border border-amber-600/80 space-y-2">
                 <h4 className="text-xs uppercase font-bold tracking-widest text-amber-400 flex items-center gap-1.5">
                   <Flame className="w-4 h-4 text-amber-400" />
                   <span>Outcome of Your Choice</span>
@@ -380,7 +422,7 @@ export const StoryModePage: React.FC = () => {
             <div className="space-y-4 pt-4 border-t border-amber-800/60">
               <h4 className="font-serif font-bold text-amber-100 text-lg flex items-center gap-2">
                 <Compass className="w-5 h-5 text-amber-400" />
-                <span>What will you do next?</span>
+                <span>{currentScene?.is_conclusion ? 'Where will your adventure go next?' : 'What will you do next?'}</span>
               </h4>
 
               {isGeneratingStory ? (
@@ -394,9 +436,10 @@ export const StoryModePage: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {(currentScene ? currentScene.choices : selectedBranch.choices).map((choice, idx) => (
                     <button
-                      key={idx}
+                      key={`${choice.next}-${idx}`}
                       onClick={() => handleMakeChoice(choice)}
-                      className="p-5 rounded-2xl bg-amber-900/50 hover:bg-amber-800/90 border-2 border-amber-700/80 text-amber-100 font-bold text-sm sm:text-base text-left transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer shadow-lg flex items-center justify-between group"
+                      disabled={isGeneratingStory}
+                      className="p-5 rounded-2xl bg-amber-900/50 hover:bg-amber-800/90 disabled:opacity-60 disabled:cursor-not-allowed border-2 border-amber-700/80 text-amber-100 font-bold text-sm sm:text-base text-left transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer shadow-lg flex items-center justify-between group"
                     >
                       <span>{choice.text}</span>
                       <ArrowRight className="w-5 h-5 text-amber-400 group-hover:translate-x-1 transition-transform" />
@@ -570,33 +613,7 @@ export const StoryModePage: React.FC = () => {
               ))}
             </div>
 
-            {/* Historical & Literary Provenance Badge */}
-            {chapter.provenance && (
-              <div className="bg-stone-900/90 p-4 rounded-2xl border border-amber-600/80 space-y-2">
-                <h4 className="font-serif font-bold text-amber-100 text-xs uppercase tracking-wider flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-amber-400" />
-                  <span>Historical & Literary Provenance</span>
-                  <span className="text-[10px] bg-amber-900/90 text-amber-300 font-semibold px-2 py-0.5 rounded border border-amber-700">
-                    Source Verified
-                  </span>
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs pt-1">
-                  <div className="bg-amber-950/60 p-3 rounded-xl border border-amber-800/60">
-                    <span className="text-amber-400 font-bold block mb-0.5">📖 Novel Reference (Romance of the Three Kingdoms):</span>
-                    <p className="text-amber-200">{chapter.provenance.novelRef}</p>
-                  </div>
-                  <div className="bg-amber-950/60 p-3 rounded-xl border border-amber-800/60">
-                    <span className="text-amber-400 font-bold block mb-0.5">📜 Historical Records (Sanguozhi / Hou Han Shu):</span>
-                    <p className="text-amber-200">{chapter.provenance.historicalRecordsRef}</p>
-                  </div>
-                </div>
-                {chapter.provenance.primarySourceText && (
-                  <div className="bg-amber-900/30 p-3 rounded-xl border border-amber-700/50 italic text-xs text-amber-200 mt-2 font-serif">
-                    "{chapter.provenance.primarySourceText}"
-                  </div>
-                )}
-              </div>
-            )}
+            {/* Involvements Bar: Characters & Locations */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-amber-800/60">
               {/* Important Characters */}
               <div className="bg-amber-950/80 p-4 rounded-2xl border border-amber-800/80 space-y-2">

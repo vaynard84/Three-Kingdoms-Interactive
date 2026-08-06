@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { BookOpen, Users, Swords, Calendar, Map, MessageSquare, Award, Home, Menu, X } from 'lucide-react';
+import { BookOpen, Users, Swords, Calendar, Map, MessageSquare, Award, Home, Menu, X, GitBranch } from 'lucide-react';
 import { useProgress } from '../hooks/useProgress';
 
 export const Navbar: React.FC = () => {
@@ -65,8 +65,16 @@ export const Navbar: React.FC = () => {
             })}
           </nav>
 
-          {/* Quick Progress Badge */}
-          <div className="hidden sm:flex items-center gap-3">
+          {/* Quick Progress Badge & Story Branches Shortcut */}
+          <div className="hidden sm:flex items-center gap-2">
+            <button
+              onClick={() => navigate('/story', { state: { tab: 'interactive' } })}
+              className="flex items-center gap-1.5 bg-gradient-to-r from-red-900 to-amber-900 hover:from-red-800 hover:to-amber-800 text-amber-200 px-3 py-1.5 rounded-full border border-amber-600/60 text-xs font-bold shadow-md transition-all cursor-pointer"
+            >
+              <GitBranch className="w-3.5 h-3.5 text-amber-400" />
+              <span>AI Story Branches</span>
+            </button>
+
             <button
               onClick={() => navigate('/progress')}
               className="flex items-center gap-2 bg-amber-900/80 hover:bg-amber-800 text-amber-200 px-3 py-1.5 rounded-full border border-amber-700/60 text-xs font-semibold shadow-sm transition-all"

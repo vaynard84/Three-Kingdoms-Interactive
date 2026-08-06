@@ -11,6 +11,18 @@ export const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const { progress } = useProgress();
   const [quickQuestion, setQuickQuestion] = useState('');
+  const [homeBranches, setHomeBranches] = useState<any[]>([]);
+
+  React.useEffect(() => {
+    fetch('/metadata.json')
+      .then(res => res.json())
+      .then(data => {
+        if (data && Array.isArray(data.branches) && data.branches.length > 0) {
+          setHomeBranches(data.branches);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Daily Fact based on today's day
   const todayIndex = new Date().getDate() % DAILY_FACTS.length;
@@ -66,22 +78,20 @@ export const HomePage: React.FC = () => {
 
           <div className="flex flex-wrap items-center gap-4 pt-2">
             <button
-              onClick={() => navigate('/story')}
+              onClick={() => navigate('/story', { state: { tab: 'interactive' } })}
               className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-amber-950 font-bold px-6 py-3.5 rounded-xl text-base shadow-lg hover:shadow-amber-500/20 flex items-center gap-2 transition-all transform hover:-translate-y-0.5 cursor-pointer"
             >
               <Play className="w-5 h-5 fill-amber-950" />
-              <span>Begin the Story</span>
+              <span>Interactive AI Story Branches</span>
             </button>
 
-            {progress.completedChapters.length > 0 && (
-              <button
-                onClick={() => navigate('/story', { state: { chapterId: progress.lastReadChapterId } })}
-                className="bg-amber-900/80 hover:bg-amber-800 text-amber-100 font-semibold px-5 py-3.5 rounded-xl text-sm border border-amber-700 flex items-center gap-2 transition-all cursor-pointer"
-              >
-                <BookOpen className="w-4 h-4 text-amber-400" />
-                <span>Continue Chapter {progress.lastReadChapterId}</span>
-              </button>
-            )}
+            <button
+              onClick={() => navigate('/story', { state: { tab: 'chapters' } })}
+              className="bg-amber-900/80 hover:bg-amber-800 text-amber-100 font-semibold px-5 py-3.5 rounded-xl text-sm border border-amber-700 flex items-center gap-2 transition-all cursor-pointer"
+            >
+              <BookOpen className="w-4 h-4 text-amber-400" />
+              <span>Read Chapters (1-15)</span>
+            </button>
 
             <button
               onClick={() => navigate('/ask')}
@@ -167,6 +177,103 @@ export const HomePage: React.FC = () => {
             >
               "{q}"
             </button>
+          ))}
+        </div>
+      </section>
+
+      {/* Interactive AI Story Branches Section */}
+      <section className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <div className="inline-flex items-center gap-1.5 bg-red-950 border border-red-700/80 text-amber-300 text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-2">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <span>Included Story Branches</span>
+            </div>
+            <h2 className="font-serif font-bold text-2xl sm:text-3xl text-amber-100 flex items-center gap-2">
+              <span>Choose Your Historical Branch</span>
+            </h2>
+            <p className="text-xs sm:text-sm text-amber-200/80">
+              Interactive decision trees based on 'The Three Kingdoms: A Hero's Journey' narrative structure.
+            </p>
+          </div>
+
+          <button
+            onClick={() => navigate('/story', { state: { tab: 'interactive' } })}
+            className="self-start sm:self-auto bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-amber-950 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-md transition-all cursor-pointer"
+          >
+            <span>Play All Branches</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {(homeBranches.length > 0 ? homeBranches.slice(0, 6) : [
+            {
+              id: "ch3_peach_garden",
+              chapter_id: 3,
+              title: "Ch 3: The Oath of the Peach Garden",
+              dialogue: "In Zhang Fei's blooming peach orchard, Liu Bei, Guan Yu, and Zhang Fei raise their cups and vow to stand as brothers forever.",
+              choices: [
+                { text: "Swear the sacred brotherly oath" },
+                { text: "Forge three legendary weapons together" }
+              ]
+            },
+            {
+              id: "ch12_thatch_hut",
+              chapter_id: 12,
+              title: "Ch 12: Three Visits in the Snow",
+              dialogue: "Snowflakes cover Longzhong. Zhuge Liang is napping peacefully inside his cottage. Liu Bei stands quietly in the cold courtyard.",
+              choices: [
+                { text: "Wait patiently until Zhuge Liang wakes up" },
+                { text: "Leave a polite handwritten note expressing your hope" }
+              ]
+            },
+            {
+              id: "ch14_red_cliffs",
+              chapter_id: 14,
+              title: "Ch 14: Battle of Red Cliffs",
+              dialogue: "Cao Cao's warships are locked together with iron chains on the Yangtze River. The southeast wind begins to blow strongly!",
+              choices: [
+                { text: "Send Huang Gai's straw fire-ships with the wind" },
+                { text: "Use straw boats in the morning fog to borrow arrows" }
+              ]
+            }
+          ]).map((b, idx) => (
+            <div
+              key={b.id || idx}
+              onClick={() => navigate('/story', { state: { tab: 'interactive', branchId: b.id } })}
+              className="bg-gradient-to-br from-amber-950 via-stone-900 to-stone-900 border-2 border-amber-700/80 hover:border-amber-400 p-6 rounded-2xl shadow-xl transition-all transform hover:-translate-y-1 cursor-pointer flex flex-col justify-between space-y-4 group"
+            >
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl">📜</span>
+                  <span className="text-[10px] bg-amber-900/90 text-amber-300 px-2.5 py-1 rounded-full font-bold border border-amber-700 uppercase tracking-widest">
+                    {b.chapter_id ? `Chapter ${b.chapter_id}` : `Branch #${idx + 1}`}
+                  </span>
+                </div>
+                <div>
+                  <h3 className="font-serif font-bold text-amber-100 text-lg group-hover:text-amber-300 transition-colors">
+                    {b.title}
+                  </h3>
+                  <p className="text-xs text-amber-400 font-serif opacity-80">ID: {b.id}</p>
+                </div>
+                <p className="text-xs text-amber-200/90 leading-relaxed font-sans line-clamp-3">
+                  "{b.dialogue}"
+                </p>
+              </div>
+
+              <div className="space-y-2 pt-2 border-t border-amber-900/80">
+                <div className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">Your Choices:</div>
+                <div className="flex flex-col gap-1.5">
+                  {b.choices?.slice(0, 2).map((c: any, cIdx: number) => (
+                    <span key={cIdx} className="text-xs bg-amber-900/40 text-amber-200 px-3 py-1.5 rounded-xl border border-amber-800/80 font-medium flex items-center justify-between">
+                      <span className="line-clamp-1">{cIdx + 1}. {c.text}</span>
+                      <ArrowRight className="w-3 h-3 text-amber-400 shrink-0 ml-1" />
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       </section>

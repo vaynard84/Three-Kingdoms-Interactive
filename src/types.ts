@@ -150,6 +150,26 @@ export interface AchievementBadge {
   unlockedAt?: string;
 }
 
+export interface StoryChoice {
+  text: string;
+  next: string;
+}
+
+export interface StoryBranch {
+  id: string;
+  title: string;
+  dialogue: string;
+  choices: StoryChoice[];
+}
+
+export interface InteractiveScene {
+  outcome: string;
+  historical_context: string;
+  next_scene_title: string;
+  dialogue: string;
+  choices: StoryChoice[];
+}
+
 export interface UserProgress {
   lastReadChapterId: number;
   completedChapters: number[];

@@ -1,0 +1,6 @@
+{
+  "name": "The Three Kingdoms: An Interactive Adventure",
+  "description": "An interactive children's storybook and historical explorer for Romance of the Three Kingdoms.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

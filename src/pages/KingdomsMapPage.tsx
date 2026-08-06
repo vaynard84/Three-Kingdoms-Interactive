@@ -4,6 +4,7 @@ import { Map, Users, Swords, BookOpen, Crown, Shield, ArrowRight, Network } from
 import { KINGDOMS } from '../data/kingdoms';
 import { CHARACTERS } from '../data/characters';
 import { Kingdom, FactionId } from '../types';
+import { ASSETS } from '../data/assets';
 
 export const KingdomsMapPage: React.FC = () => {
   const navigate = useNavigate();
@@ -13,44 +14,52 @@ export const KingdomsMapPage: React.FC = () => {
 
   return (
     <div className="space-y-8 pb-16">
-      {/* Header Banner */}
-      <div className="bg-amber-950/80 p-8 rounded-3xl border border-amber-800/80 shadow-xl space-y-3">
-        <div className="inline-flex items-center gap-2 bg-amber-900/80 border border-amber-700/80 text-amber-300 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest">
-          <Map className="w-4 h-4 text-amber-400" />
-          <span>Kingdoms & Alliances</span>
-        </div>
-        <h1 className="font-serif font-extrabold text-3xl sm:text-4xl text-amber-100">
-          The Three Realms of Ancient China
-        </h1>
-        <p className="text-sm text-amber-200/90 max-w-2xl leading-relaxed">
-          Explore the geographical strongholds, territories, alliances, and complex webs of relationships that bound the heroes together.
-        </p>
+      {/* Header Banner with Map Scroll Background */}
+      <div className="relative overflow-hidden rounded-3xl border-2 border-amber-600/60 shadow-2xl p-8 space-y-4">
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-35 transition-all" 
+          style={{ backgroundImage: `url(${ASSETS.mapScroll})` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-stone-950 via-stone-950/90 to-stone-950/80" />
 
-        {/* View Switcher Tabs */}
-        <div className="flex gap-2 pt-2">
-          <button
-            onClick={() => setActiveTab('map')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
-              activeTab === 'map'
-                ? 'bg-amber-500 text-amber-950 shadow-md'
-                : 'bg-amber-900/60 text-amber-200 border border-amber-700/80'
-            }`}
-          >
-            <Map className="w-4 h-4" />
-            <span>Interactive Kingdom Map</span>
-          </button>
+        <div className="relative z-10 space-y-3">
+          <div className="inline-flex items-center gap-2 bg-amber-900/90 border border-amber-500/60 text-amber-200 px-3.5 py-1 rounded-full text-xs font-semibold uppercase tracking-widest shadow-md">
+            <Map className="w-4 h-4 text-amber-400" />
+            <span>Kingdoms & Alliances Map</span>
+          </div>
+          <h1 className="font-serif-display font-extrabold text-3xl sm:text-4xl text-amber-100 gold-gradient-text">
+            The Three Realms of Ancient China
+          </h1>
+          <p className="text-sm text-amber-200/90 max-w-2xl leading-relaxed font-sans">
+            Explore the geographical strongholds, territories, alliances, and complex webs of relationships that bound the heroes together.
+          </p>
 
-          <button
-            onClick={() => setActiveTab('relationships')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
-              activeTab === 'relationships'
-                ? 'bg-amber-500 text-amber-950 shadow-md'
-                : 'bg-amber-900/60 text-amber-200 border border-amber-700/80'
-            }`}
-          >
-            <Network className="w-4 h-4" />
-            <span>Character Relationship Web</span>
-          </button>
+          {/* View Switcher Tabs */}
+          <div className="flex gap-2 pt-2">
+            <button
+              onClick={() => setActiveTab('map')}
+              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 border ${
+                activeTab === 'map'
+                  ? 'bg-amber-500 text-stone-950 border-amber-400 shadow-lg'
+                  : 'bg-stone-900/90 text-amber-200 border-amber-700/80 hover:bg-stone-800'
+              }`}
+            >
+              <Map className="w-4 h-4" />
+              <span>Interactive Kingdom Map</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('relationships')}
+              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 border ${
+                activeTab === 'relationships'
+                  ? 'bg-amber-500 text-stone-950 border-amber-400 shadow-lg'
+                  : 'bg-stone-900/90 text-amber-200 border-amber-700/80 hover:bg-stone-800'
+              }`}
+            >
+              <Network className="w-4 h-4" />
+              <span>Character Relationship Web</span>
+            </button>
+          </div>
         </div>
       </div>
 

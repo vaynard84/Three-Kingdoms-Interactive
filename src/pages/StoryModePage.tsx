@@ -278,7 +278,7 @@ export const StoryModePage: React.FC = () => {
                   onChange={(e) => setSelectedChapterFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))}
                   className="bg-amber-950 border border-amber-700 text-amber-100 text-xs font-semibold px-3 py-1.5 rounded-xl cursor-pointer focus:outline-none"
                 >
-                  <option value="all">🌟 All 15 Chapters (Interactive)</option>
+                  <option value="all">🌟 All {CHAPTERS.length} Chapters (Interactive)</option>
                   {CHAPTERS.map((c) => (
                     <option key={c.id} value={c.id}>
                       Chapter {c.id}: {c.title.replace(/^\d+\.\s*/, '')}
@@ -570,7 +570,33 @@ export const StoryModePage: React.FC = () => {
               ))}
             </div>
 
-            {/* Involvements Bar: Characters & Locations */}
+            {/* Historical & Literary Provenance Badge */}
+            {chapter.provenance && (
+              <div className="bg-stone-900/90 p-4 rounded-2xl border border-amber-600/80 space-y-2">
+                <h4 className="font-serif font-bold text-amber-100 text-xs uppercase tracking-wider flex items-center gap-2">
+                  <BookOpen className="w-4 h-4 text-amber-400" />
+                  <span>Historical & Literary Provenance</span>
+                  <span className="text-[10px] bg-amber-900/90 text-amber-300 font-semibold px-2 py-0.5 rounded border border-amber-700">
+                    Source Verified
+                  </span>
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs pt-1">
+                  <div className="bg-amber-950/60 p-3 rounded-xl border border-amber-800/60">
+                    <span className="text-amber-400 font-bold block mb-0.5">📖 Novel Reference (Romance of the Three Kingdoms):</span>
+                    <p className="text-amber-200">{chapter.provenance.novelRef}</p>
+                  </div>
+                  <div className="bg-amber-950/60 p-3 rounded-xl border border-amber-800/60">
+                    <span className="text-amber-400 font-bold block mb-0.5">📜 Historical Records (Sanguozhi / Hou Han Shu):</span>
+                    <p className="text-amber-200">{chapter.provenance.historicalRecordsRef}</p>
+                  </div>
+                </div>
+                {chapter.provenance.primarySourceText && (
+                  <div className="bg-amber-900/30 p-3 rounded-xl border border-amber-700/50 italic text-xs text-amber-200 mt-2 font-serif">
+                    "{chapter.provenance.primarySourceText}"
+                  </div>
+                )}
+              </div>
+            )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-amber-800/60">
               {/* Important Characters */}
               <div className="bg-amber-950/80 p-4 rounded-2xl border border-amber-800/80 space-y-2">

@@ -2,6 +2,20 @@ import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
+
+// Child safety sanitization helper for server AI responses
+function sanitizeServerChildText(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/behead(ed|ing)?/gi, 'defeated')
+    .replace(/decapitat(ed|ing|e)?/gi, 'subdued')
+    .replace(/severed head/gi, 'trophy of victory')
+    .replace(/bloodbath|blood bath/gi, 'fierce battle')
+    .replace(/slaughtered|massacred/gi, 'overwhelmed')
+    .replace(/mutilat(ed|ing)/gi, 'injured')
+    .replace(/disembowel(ed)?/gi, 'struck down')
+    .replace(/tortur(ed|ing)/gi, 'punished');
+}
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -81,7 +95,7 @@ Guidelines for your response:
 3. Be historically accurate to the classic novel/history while making complex politics easy to understand.
 4. Keep the answer around 2-3 short paragraphs.
 5. Provide 2-3 follow-up questions the child can ask next.
-6. Clearly mention related chapters (1 to 15), key characters, or key events.
+6. Clearly mention related chapters (1 to 17), key characters, or key events.
 7. Return your response in JSON format matching this schema:
 {
   "answer": "string",
@@ -109,12 +123,18 @@ Guidelines for your response:
       if (text) {
         try {
           const parsed = JSON.parse(text);
+          if (parsed && typeof parsed.answer === 'string') {
+            parsed.answer = sanitizeServerChildText(parsed.answer);
+          }
+          if (parsed && typeof parsed.historicalNote === 'string') {
+            parsed.historicalNote = sanitizeServerChildText(parsed.historicalNote);
+          }
           res.json(parsed);
           return;
         } catch {
           // If JSON parse fails, wrap raw text
           res.json({
-            answer: text,
+            answer: sanitizeServerChildText(text),
             followUps: ["Who was the bravest warrior in Shu?", "Tell me more about the Battle of Red Cliffs!"],
             related: { chapters: [14], characters: ["Zhuge Liang", "Liu Bei"], events: ["Battle of Red Cliffs"] }
           });
@@ -198,6 +218,21 @@ Return a JSON object matching this exact schema:
       if (text) {
         try {
           const parsed = JSON.parse(text);
+          if (parsed && typeof parsed.outcome === 'string') {
+            parsed.outcome = sanitizeServerChildText(parsed.outcome);
+          }
+          if (parsed && typeof parsed.dialogue === 'string') {
+            parsed.dialogue = sanitizeServerChildText(parsed.dialogue);
+          }
+          if (parsed && typeof parsed.historical_context === 'string') {
+            parsed.historical_context = sanitizeServerChildText(parsed.historical_context);
+          }
+          if (parsed && Array.isArray(parsed.choices)) {
+            parsed.choices = parsed.choices.map((c: any) => ({
+              ...c,
+              text: sanitizeServerChildText(String(c?.text || ''))
+            }));
+          }
           res.json(parsed);
           return;
         } catch {
@@ -522,8 +557,50 @@ Return a JSON object matching this exact schema:
       next_scene_title: "Ch 15: The Tri-State Balance",
       dialogue: "With three sovereign states established, China enters an era of rich cultural heritage and legendary history.",
       choices: [
-        { text: "Explore the full history in the Character & Battle Guides", next: "explore_guides" },
+        { text: "Advance to Chapter 16: Northern Expeditions", next: "ch16_start" },
         { text: "Replay your favorite story chapter from the beginning", next: "replay_story" }
+      ]
+    },
+    // Ch 16
+    "Deploy Wooden Oxen transport supply convoys": {
+      outcome: "Zhuge Liang's automated Wooden Oxen roll effortlessly up steep mountain cliffs, delivering fresh grain supplies to the frontline troops!",
+      historical_context: "The 'Wooden Oxen and Gliding Horses' were ancient mechanical wheelbarrows designed to solve mountain logistics.",
+      next_scene_title: "Ch 16: Mountain Logistics Victory",
+      dialogue: "With steady food supplies, Zhuge Liang outmaneuvers Sima Yi along the Qishan mountains.",
+      choices: [
+        { text: "Establish fortified grain depots in the valley", next: "fortify_depots" },
+        { text: "Send peaceful agricultural envoys to local villagers", next: "peaceful_envoys" }
+      ]
+    },
+    "Outmaneuver Sima Yi's defensive hill fortresses": {
+      outcome: "Zhuge Liang uses clever decoy banners along the river valley. Sima Yi chooses to defend cautiously, preserving both armies from heavy casualties!",
+      historical_context: "Sima Yi respected Zhuge Liang's brilliance so much that he preferred strategic defense over risky open battles.",
+      next_scene_title: "Ch 16: The Strategic Chess Match",
+      dialogue: "The northern campaigns show that wisdom and patience can protect soldiers' lives.",
+      choices: [
+        { text: "Train young scholars to pass on Zhuge Liang's inventions", next: "train_scholars" },
+        { text: "Prepare for the final chapter of reunification", next: "ch17_start" }
+      ]
+    },
+    // Ch 17
+    "Proclaim universal peace and rebuild farmland": {
+      outcome: "The Jin Dynasty proclaims peace across all three former realms! Farmers return to their fields, roads reopen for trade, and families celebrate reunion.",
+      historical_context: "The founding of the Jin Dynasty in 280 AD marked the end of nearly a century of division and war in China.",
+      next_scene_title: "Ch 17: The Golden Era of Peace",
+      dialogue: "China enters a peaceful era where the heroism of Liu Bei, Cao Cao, Sun Quan, and Zhuge Liang becomes legendary folklore.",
+      choices: [
+        { text: "Explore the full Character & Battle Guides", next: "explore_guides" },
+        { text: "Test your historical knowledge in the Trivia Quiz", next: "take_quiz" }
+      ]
+    },
+    "Establish royal libraries to preserve Three Kingdoms history": {
+      outcome: "Imperial scholars record the heroic deeds, clever strategies, and loyal vows into royal archives, preserving the Romance of the Three Kingdoms forever!",
+      historical_context: "Scholars like Chen Shou compiled the Records of the Three Kingdoms, ensuring these historical legends lived on for thousands of years.",
+      next_scene_title: "Ch 17: Preserving the Legends",
+      dialogue: "Your storybook journey through all 17 chapters is complete! You are now a Grand Historian of the Three Kingdoms.",
+      choices: [
+        { text: "Review your Achievements & Progress Badges", next: "view_progress" },
+        { text: "Replay the story from Chapter 1", next: "replay_story" }
       ]
     },
     // Generic fallback choices

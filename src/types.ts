@@ -13,6 +13,12 @@ export interface ChapterQuiz {
   correctOptionId: string;
 }
 
+export interface ChapterProvenance {
+  novelRef: string;
+  historicalRecordsRef: string;
+  primarySourceText?: string;
+}
+
 export interface Chapter {
   id: number;
   title: string;
@@ -27,6 +33,7 @@ export interface Chapter {
   quiz: ChapterQuiz;
   suggestedQuestions: string[];
   yearOrEra: string;
+  provenance?: ChapterProvenance;
 }
 
 export interface CharacterRelationship {

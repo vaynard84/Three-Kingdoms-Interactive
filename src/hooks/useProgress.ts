@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { UserProgress, AchievementBadge } from '../types';
+import { CHAPTERS } from '../data/chapters';
 
 export const ALL_BADGES: AchievementBadge[] = [
   { id: 'first-chapter', title: 'First Steps in History', description: 'Read your first story chapter.', iconName: 'BookOpen', category: 'reading' },
   { id: 'chapter-5', title: 'Warlord Apprentice', description: 'Completed 5 chapters.', iconName: 'Feather', category: 'reading' },
-  { id: 'all-chapters', title: 'Grand Historian', description: 'Read all 15 chapters of the story!', iconName: 'Award', category: 'reading' },
+  { id: 'all-chapters', title: 'Grand Historian', description: `Read all ${CHAPTERS.length} chapters of the story!`, iconName: 'Award', category: 'reading' },
   { id: 'quiz-master', title: 'Tactical Genius', description: 'Scored 100% on 3 chapter quizzes.', iconName: 'Brain', category: 'quiz' },
   { id: 'character-fan', title: 'Hero Finder', description: 'Saved 3 favorite characters.', iconName: 'Heart', category: 'explorer' },
   { id: 'personality-done', title: 'Self Discovery', description: 'Completed the Three Kingdoms personality quiz.', iconName: 'Sparkles', category: 'mastery' }
@@ -24,7 +25,16 @@ export function useProgress() {
     try {
       const saved = localStorage.getItem('3k_storybook_progress_v1');
       if (saved) {
-        return { ...INITIAL_PROGRESS, ...JSON.parse(saved) };
+        const parsed = JSON.parse(saved);
+        // Ensure legacy or corrupted data structures migrate cleanly
+        return {
+          ...INITIAL_PROGRESS,
+          ...parsed,
+          completedChapters: Array.isArray(parsed.completedChapters) ? parsed.completedChapters.filter((id: any) => typeof id === 'number') : [],
+          bookmarkedChapters: Array.isArray(parsed.bookmarkedChapters) ? parsed.bookmarkedChapters.filter((id: any) => typeof id === 'number') : [],
+          favoriteCharacterIds: Array.isArray(parsed.favoriteCharacterIds) ? parsed.favoriteCharacterIds.filter((id: any) => typeof id === 'string') : [],
+          unlockedBadgeIds: Array.isArray(parsed.unlockedBadgeIds) ? parsed.unlockedBadgeIds.filter((id: any) => typeof id === 'string') : ['first-chapter']
+        };
       }
     } catch {
       // Ignore JSON error
@@ -48,7 +58,7 @@ export function useProgress() {
       const badges = new Set(prev.unlockedBadgeIds);
       badges.add('first-chapter');
       if (completed.size >= 5) badges.add('chapter-5');
-      if (completed.size >= 15) badges.add('all-chapters');
+      if (completed.size >= CHAPTERS.length) badges.add('all-chapters');
 
       return {
         ...prev,

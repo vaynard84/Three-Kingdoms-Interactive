@@ -6,6 +6,7 @@ import { CHAPTERS } from '../data/chapters';
 import { CHARACTERS } from '../data/characters';
 import { EVENTS } from '../data/events';
 import { DAILY_FACTS } from '../data/dailyFacts';
+import { ASSETS } from '../data/assets';
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -53,52 +54,52 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className="space-y-12 pb-12">
-      {/* Hero Banner */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-950 via-stone-900 to-red-950 text-amber-100 border-2 border-amber-800/80 shadow-2xl p-8 sm:p-12 lg:p-16">
-        {/* Background decorative artwork texture */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(217,119,6,0.2),transparent_60%)] pointer-events-none" />
-        <div className="absolute -right-12 -bottom-12 opacity-10 text-[200px] font-serif font-bold text-amber-200 select-none pointer-events-none">
+      {/* Hero Banner with Layered Art Scene */}
+      <section className="relative overflow-hidden rounded-3xl border-2 border-amber-600/60 shadow-2xl min-h-[460px] flex items-center">
+        {/* Background Image Artwork */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 transform scale-105" 
+          style={{ backgroundImage: `url(${ASSETS.heroScene})` }}
+        />
+        {/* Atmospheric Ink-wash Gradient Overlays for Readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-stone-950/95 via-stone-950/80 to-stone-900/60" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(217,119,6,0.25),transparent_70%)]" />
+
+        {/* Decorative Stamp Seal */}
+        <div className="absolute top-6 right-6 opacity-20 text-6xl sm:text-8xl font-chinese font-bold text-amber-200 select-none pointer-events-none">
           三国
         </div>
 
-        <div className="relative z-10 max-w-3xl space-y-6">
-          <div className="inline-flex items-center gap-2 bg-amber-900/80 border border-amber-700/80 text-amber-300 px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest shadow-sm">
-            <Sparkles className="w-4 h-4 text-amber-400" />
-            <span>Interactive Children's Epic</span>
+        <div className="relative z-10 p-8 sm:p-12 lg:p-16 max-w-3xl space-y-6">
+          <div className="inline-flex items-center gap-2 bg-amber-900/90 border border-amber-500/60 text-amber-200 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest shadow-lg backdrop-blur-sm">
+            <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
+            <span>Interactive Children's Historical Epic</span>
           </div>
 
-          <h1 className="font-serif font-extrabold text-4xl sm:text-5xl lg:text-6xl text-amber-100 leading-tight tracking-wide drop-shadow-md">
+          <h1 className="font-serif-display font-black text-4xl sm:text-5xl lg:text-6xl text-amber-100 leading-tight tracking-wide drop-shadow-lg">
             The Three Kingdoms: <br />
-            <span className="text-amber-400">An Interactive Adventure</span>
+            <span className="gold-gradient-text">An Interactive Adventure</span>
           </h1>
 
-          <p className="text-base sm:text-lg text-amber-200/90 leading-relaxed font-sans">
+          <p className="text-base sm:text-lg text-amber-200/95 leading-relaxed font-sans max-w-2xl drop-shadow">
             Step into ancient China! Join sworn heroes, clever strategists, and ambitious rulers in the grandest story of courage, friendship, and wisdom ever told.
           </p>
 
           <div className="flex flex-wrap items-center gap-4 pt-2">
             <button
-              onClick={() => navigate('/story', { state: { tab: 'interactive' } })}
-              className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-amber-950 font-bold px-6 py-3.5 rounded-xl text-base shadow-lg hover:shadow-amber-500/20 flex items-center gap-2 transition-all transform hover:-translate-y-0.5 cursor-pointer"
+              onClick={() => navigate('/story')}
+              className="flex items-center gap-2.5 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-stone-950 font-bold px-7 py-3.5 rounded-2xl text-base shadow-xl border border-amber-300 transition-all transform hover:-translate-y-0.5 cursor-pointer"
             >
-              <Play className="w-5 h-5 fill-amber-950" />
-              <span>Interactive AI Story Branches</span>
+              <Play className="w-5 h-5 fill-stone-950" />
+              <span>Begin the Adventure</span>
             </button>
 
             <button
-              onClick={() => navigate('/story', { state: { tab: 'chapters' } })}
-              className="bg-amber-900/80 hover:bg-amber-800 text-amber-100 font-semibold px-5 py-3.5 rounded-xl text-sm border border-amber-700 flex items-center gap-2 transition-all cursor-pointer"
+              onClick={() => navigate('/story', { state: { chapterId: progress.lastReadChapterId } })}
+              className="flex items-center gap-2 bg-stone-900/90 hover:bg-stone-800 text-amber-200 font-semibold px-6 py-3.5 rounded-2xl text-base border border-amber-600/70 shadow-lg backdrop-blur-sm transition-all cursor-pointer"
             >
-              <BookOpen className="w-4 h-4 text-amber-400" />
-              <span>Read Chapters (1-15)</span>
-            </button>
-
-            <button
-              onClick={() => navigate('/ask')}
-              className="bg-stone-900/80 hover:bg-stone-800 text-amber-200 px-5 py-3.5 rounded-xl text-sm border border-amber-800/80 flex items-center gap-2 transition-all cursor-pointer"
-            >
-              <MessageSquare className="w-4 h-4 text-amber-400" />
-              <span>Ask Story Guide</span>
+              <BookOpen className="w-5 h-5 text-amber-400" />
+              <span>Continue Ch. {progress.lastReadChapterId}</span>
             </button>
           </div>
         </div>
@@ -113,7 +114,7 @@ export const HomePage: React.FC = () => {
           <div>
             <h3 className="font-serif font-bold text-amber-100 text-lg">Your Adventure Progress</h3>
             <p className="text-xs text-amber-300/80">
-              You've completed <span className="font-bold text-amber-300">{progress.completedChapters.length}</span> out of 15 chapters and earned <span className="font-bold text-amber-300">{progress.unlockedBadgeIds.length}</span> achievement badges.
+              You've completed <span className="font-bold text-amber-300">{progress.completedChapters.length}</span> out of {CHAPTERS.length} chapters and earned <span className="font-bold text-amber-300">{progress.unlockedBadgeIds.length}</span> achievement badges.
             </p>
           </div>
         </div>

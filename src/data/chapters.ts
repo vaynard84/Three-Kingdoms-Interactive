@@ -36,7 +36,12 @@ export const CHAPTERS: Chapter[] = [
       "How did the Mandate of Heaven concept influence ancient Chinese politics?",
       "Who were the Ten Eunuchs and how did they control Emperor Ling?",
       "Why did natural disasters carry such deep political meaning in the Han Dynasty?"
-    ]
+    ],
+    provenance: {
+      novelRef: "Romance of the Three Kingdoms (Sanguo Yanyi), Chapter 1",
+      historicalRecordsRef: "Book of the Later Han (Hou Han Shu), Annals of Emperor Ling",
+      primarySourceText: "In the first year of Guanghe (178 AD), a black dragon descended upon the palace court, signaling grave disruption in the Heavens and realm."
+    }
   },
   {
     id: 2,
@@ -600,7 +605,12 @@ export const CHAPTERS: Chapter[] = [
       "What was the famous 'Empty Fort Strategy' used by Zhuge Liang against Sima Yi at Xicheng?",
       "How did the 'Wooden Oxen and Floating Horses' mechanical transports function?",
       "Why is Zhuge Liang's 'Chu Shi Biao' studied by students across East Asia today?"
-    ]
+    ],
+    provenance: {
+      novelRef: "Romance of the Three Kingdoms, Chapters 87-91, 102-104",
+      historicalRecordsRef: "Records of the Three Kingdoms (Sanguozhi), Volume 35: Biography of Zhuge Liang",
+      primarySourceText: "I will exert my utmost effort, giving my all until my heart ceases to beat. (Chu Shi Biao, 227 AD)"
+    }
   },
   {
     id: 17,
@@ -638,6 +648,11 @@ export const CHAPTERS: Chapter[] = [
       "How did Deng Ai march across mountain cliffs to surprise Chengdu in 263 AD?",
       "What was Sima Yi's 'Gaoping Tombs Coup' and how did it change Chinese history?",
       "Why does the opening sentence of Three Kingdoms say: 'The empire, long divided, must unite; long united, must divide'?"
-    ]
+    ],
+    provenance: {
+      novelRef: "Romance of the Three Kingdoms, Chapter 120",
+      historicalRecordsRef: "Book of Jin (Jin Shu), Annals of Emperor Wu (Sima Yan)",
+      primarySourceText: "The empire, long divided, must unite; long united, must divide. Thus it has ever been."
+    }
   }
 ];

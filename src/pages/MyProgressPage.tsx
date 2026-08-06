@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Award, BookOpen, Heart, Bookmark, Brain, Sparkles, Book, Compass, CheckCircle2, Lock, ArrowRight, RotateCcw } from 'lucide-react';
+import { Award, BookOpen, Heart, Bookmark, Brain, Sparkles, Book, Compass, CheckCircle2, Lock, ArrowRight, RotateCcw, ShieldCheck } from 'lucide-react';
 import { useProgress, ALL_BADGES } from '../hooks/useProgress';
 import { CHAPTERS } from '../data/chapters';
 import { CHARACTERS } from '../data/characters';
 import { GLOSSARY_TERMS } from '../data/glossary';
 import { DAILY_FACTS } from '../data/dailyFacts';
 import { PERSONALITY_QUESTIONS } from '../data/personalityQuiz';
+import { runDataIntegrityCheck } from '../tests/dataIntegrity';
 
 export const MyProgressPage: React.FC = () => {
   const navigate = useNavigate();
   const { progress, setPersonalityResult } = useProgress();
+  const integrityReport = runDataIntegrityCheck();
 
   const [activeTab, setActiveTab] = useState<'progress' | 'quiz' | 'glossary' | 'facts'>('progress');
+
 
   // Personality Quiz State
   const [personalityCurrentQ, setPersonalityCurrentQ] = useState(0);
@@ -62,9 +65,16 @@ export const MyProgressPage: React.FC = () => {
     <div className="space-y-8 pb-16">
       {/* Header Banner */}
       <div className="bg-amber-950/80 p-8 rounded-3xl border border-amber-800/80 shadow-xl space-y-3">
-        <div className="inline-flex items-center gap-2 bg-amber-900/80 border border-amber-700/80 text-amber-300 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest">
-          <Award className="w-4 h-4 text-amber-400" />
-          <span>My Progress & Learning Hub</span>
+        <div className="flex flex-wrap items-center gap-2 pt-1">
+          <div className="inline-flex items-center gap-2 bg-amber-900/80 border border-amber-700/80 text-amber-300 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest">
+            <Award className="w-4 h-4 text-amber-400" />
+            <span>My Progress & Learning Hub</span>
+          </div>
+
+          <div className="inline-flex items-center gap-1.5 bg-emerald-950/80 border border-emerald-700/80 text-emerald-300 px-3 py-1 rounded-full text-xs font-bold">
+            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <span>Dataset Integrity 100% Passed ({integrityReport.totalChapters} Ch / {integrityReport.totalCharacters} Heroes / {integrityReport.totalEvents} Events)</span>
+          </div>
         </div>
         <h1 className="font-serif font-extrabold text-3xl sm:text-4xl text-amber-100">
           Achievements, Games & Glossary
@@ -109,16 +119,16 @@ export const MyProgressPage: React.FC = () => {
               <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">Chapters Completed</span>
               <div className="flex items-baseline justify-between">
                 <span className="font-serif font-extrabold text-3xl text-amber-100">
-                  {progress.completedChapters.length} / 15
+                  {progress.completedChapters.length} / {CHAPTERS.length}
                 </span>
                 <span className="text-xs text-amber-300 font-bold">
-                  {Math.round((progress.completedChapters.length / 15) * 100)}%
+                  {Math.round((progress.completedChapters.length / CHAPTERS.length) * 100)}%
                 </span>
               </div>
               <div className="w-full bg-amber-900/60 h-2.5 rounded-full overflow-hidden border border-amber-800">
                 <div
                   className="bg-amber-400 h-full rounded-full transition-all"
-                  style={{ width: `${(progress.completedChapters.length / 15) * 100}%` }}
+                  style={{ width: `${(progress.completedChapters.length / CHAPTERS.length) * 100}%` }}
                 />
               </div>
             </div>

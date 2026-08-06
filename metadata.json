@@ -246,6 +246,38 @@
           "next": "ch15_shu_wu_trade"
         }
       ]
+    },
+    {
+      "id": "ch16_northern_expeditions",
+      "chapter_id": 16,
+      "title": "Ch 16: Northern Expeditions & Wooden Oxen",
+      "dialogue": "Zhuge Liang leads the Northern Expeditions across rugged Qinling mountains, inventing automated Wooden Oxen and Gliding Horses to haul grain across steep cliffs.",
+      "choices": [
+        {
+          "text": "Deploy Wooden Oxen transport supply convoys",
+          "next": "ch16_deploy_oxen"
+        },
+        {
+          "text": "Outmaneuver Sima Yi's defensive hill fortresses",
+          "next": "ch16_outmaneuver_sima"
+        }
+      ]
+    },
+    {
+      "id": "ch17_reunification_jin",
+      "chapter_id": 17,
+      "title": "Ch 17: The Great Unification",
+      "dialogue": "After decades of war, wisdom and peace triumph. Sima Yan establishes the Jin Dynasty, reuniting the land under a peaceful era of rebuilding and law.",
+      "choices": [
+        {
+          "text": "Proclaim universal peace and rebuild farmland",
+          "next": "ch17_proclaim_peace"
+        },
+        {
+          "text": "Establish royal libraries to preserve Three Kingdoms history",
+          "next": "ch17_preserve_history"
+        }
+      ]
     }
   ]
 }

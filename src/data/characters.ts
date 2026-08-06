@@ -473,5 +473,148 @@ export const CHARACTERS: Character[] = [
     chapterIds: [15, 16, 17],
     avatarSymbol: "🗡️",
     quote: "My body belongs to Shu; so long as I draw breath, the Han flag shall not fall!"
+  },
+  {
+    id: "sun-jian",
+    name: "Sun Jian",
+    nameChinese: "孙坚",
+    courtesyName: "Wentai (文台)",
+    faction: "Wu",
+    role: "General",
+    personality: "Fierce, brave, honorable, and known as 'The Tiger of Jiangdong'.",
+    strengths: ["Fearless vanguard charge", "Founding spirit of Eastern Wu", "Naval combat skill"],
+    weaknesses: ["Impulsive bravery on the frontlines"],
+    relationships: [
+      { targetCharacterId: "sun-quan", targetCharacterName: "Sun Quan", type: "Family", description: "Father of Sun Ce and Sun Quan." },
+      { targetCharacterId: "yuan-shao", targetCharacterName: "Yuan Shao", type: "Rival", description: "Vanguard commander during the Coalition against Dong Zhuo." }
+    ],
+    majorEvents: ["Coalition Against Dong Zhuo", "Discovery of the Imperial Jade Seal"],
+    biography: "Known as the 'Tiger of Jiangdong', Sun Jian was a formidable warrior who led the vanguard against Dong Zhuo and discovered the lost Imperial Jade Seal in Luoyang.",
+    whyThisCharacterMatters: "Sun Jian laid the courageous military foundation that his sons Sun Ce and Sun Quan built into Eastern Wu.",
+    timeline: [
+      { year: "184 AD", event: "Fought bravely against the Yellow Turban rebels." },
+      { year: "191 AD", event: "Discovered the Imperial Jade Seal in Luoyang's burned ruins." }
+    ],
+    chapterIds: [1, 5, 7],
+    avatarSymbol: "🐯",
+    quote: "My blade strikes for the honor of Jiangdong!"
+  },
+  {
+    id: "zhang-jue",
+    name: "Zhang Jue",
+    nameChinese: "张角",
+    courtesyName: "N/A",
+    faction: "Other",
+    role: "Official",
+    personality: "Charismatic, visionary, herbal healer, and spiritual leader of the Yellow Turbans.",
+    strengths: ["Herbal medicine", "Inspiring millions of followers"],
+    weaknesses: ["Lack of military strategic training"],
+    relationships: [
+      { targetCharacterId: "liu-bei", targetCharacterName: "Liu Bei", type: "Rival", description: "Opposed by local volunteer armies across Jizhou." }
+    ],
+    majorEvents: ["Yellow Turban Rebellion"],
+    biography: "Founder of the Taiping Sect who rallied millions of impoverished farmers wearing yellow headbands to challenge corrupt Han governance.",
+    whyThisCharacterMatters: "Zhang Jue's peasant uprising was the historical catalyst that opened the Three Kingdoms era.",
+    timeline: [
+      { year: "184 AD", event: "Launched the Yellow Turban Rebellion." }
+    ],
+    chapterIds: [1, 2],
+    avatarSymbol: "🌾",
+    quote: "The Azure Sky is dead; the Yellow Sky shall rise!"
+  },
+  {
+    id: "xiahou-dun",
+    name: "Xiahou Dun",
+    nameChinese: "夏侯惇",
+    courtesyName: "Yuanrang (元让)",
+    faction: "Wei",
+    role: "Warrior",
+    personality: "Fiercely loyal, brave, rugged, and completely devoted to Cao Cao.",
+    strengths: ["Unwavering battlefield morale", "Fierce combat energy"],
+    weaknesses: ["Hot-headed under tactical provocation"],
+    relationships: [
+      { targetCharacterId: "cao-cao", targetCharacterName: "Cao Cao", type: "Family", description: "Cousin and seniormost general under Cao Cao." }
+    ],
+    majorEvents: ["Campaigns against Lü Bu", "Battle of Bowan Slope"],
+    biography: "One of Cao Cao's most trusted generals and cousin, famous for his fierce courage and unyielding devotion on the battlefield.",
+    whyThisCharacterMatters: "Xiahou Dun represents total loyalty and steadfast friendship during times of war.",
+    timeline: [
+      { year: "190 AD", event: "Joined Cao Cao's early army as a founding general." },
+      { year: "208 AD", event: "Led Wei's vanguard force into Bowan Slope." }
+    ],
+    chapterIds: [5, 6, 13],
+    avatarSymbol: "🛡️",
+    quote: "My loyalty to Lord Cao Cao shall never waver!"
+  },
+  {
+    id: "lu-su",
+    name: "Lu Su",
+    nameChinese: "鲁肃",
+    courtesyName: "Zijing (子敬)",
+    faction: "Wu",
+    role: "Strategist",
+    personality: "Generous, diplomatic, honest, farsighted, and committed to peace.",
+    strengths: ["Master diplomat", "Building the Shu-Wu alliance"],
+    weaknesses: ["Sometimes caught between competing allies"],
+    relationships: [
+      { targetCharacterId: "sun-quan", targetCharacterName: "Sun Quan", type: "Ally", description: "Key advisor and chief diplomat of Wu." },
+      { targetCharacterId: "zhuge-liang", targetCharacterName: "Zhuge Liang", type: "Ally", description: "Respected diplomat partner at Red Cliffs." }
+    ],
+    majorEvents: ["Forming the Sun-Liu Alliance", "Battle of Red Cliffs"],
+    biography: "A wealthy, open-handed scholar who joined Sun Quan and served as the diplomatic architect of the grand alliance between Wu and Shu.",
+    whyThisCharacterMatters: "Lu Su proves that open-minded diplomacy and generosity are essential for uniting former rivals against common threats.",
+    timeline: [
+      { year: "208 AD", event: "Brokered the historic coalition between Sun Quan and Liu Bei." }
+    ],
+    chapterIds: [14, 15],
+    avatarSymbol: "🤝",
+    quote: "An alliance forged in sincerity can withstand any storm."
+  },
+  {
+    id: "gongsun-zan",
+    name: "Gongsun Zan",
+    nameChinese: "公孙瓒",
+    courtesyName: "Bogui (伯珪)",
+    faction: "Other",
+    role: "Ruler",
+    personality: "Proud, martial, commander of white horse cavalry, and schoolfriend of Liu Bei.",
+    strengths: ["White Horse Volunteers cavalry force"],
+    weaknesses: ["Overly proud and stubborn in defensive sieges"],
+    relationships: [
+      { targetCharacterId: "liu-bei", targetCharacterName: "Liu Bei", type: "Ally", description: "Former classmate under Master Lu Zhi." }
+    ],
+    majorEvents: ["Coalition Against Dong Zhuo", "Wars with Yuan Shao"],
+    biography: "Northern warlord famous for his elite 'White Horse Cavalry' who gave Liu Bei his early military command opportunities.",
+    whyThisCharacterMatters: "Gongsun Zan shows how early friendships provided crucial stepping stones for emerging heroes.",
+    timeline: [
+      { year: "190 AD", event: "Brought Liu Bei, Guan Yu, and Zhang Fei to Hulao Pass." }
+    ],
+    chapterIds: [2, 5],
+    avatarSymbol: "🐎",
+    quote: "The White Horse Cavalry marches for honor!"
+  },
+  {
+    id: "yuan-shu",
+    name: "Yuan Shu",
+    nameChinese: "袁术",
+    courtesyName: "Highway (公路)",
+    faction: "Other",
+    role: "Ruler",
+    personality: "Arrogant, vain, ambitious, and self-indulgent.",
+    strengths: ["Noble family heritage and rich granaries in Huainan"],
+    weaknesses: ["Excessive vanity and premature self-crowning"],
+    relationships: [
+      { targetCharacterId: "yuan-shao", targetCharacterName: "Yuan Shao", type: "Family", description: "Half-brother and fierce political rival." }
+    ],
+    majorEvents: ["Coalition Against Dong Zhuo", "Claiming Emperor Title at Zhong"],
+    biography: "The ambitious half-brother of Yuan Shao who seized the Imperial Jade Seal and prematurely declared himself emperor, alienating all regional warlords.",
+    whyThisCharacterMatters: "Yuan Shu serves as a classic cautionary tale about vanity and premature ambition.",
+    timeline: [
+      { year: "190 AD", event: "Managed coalition food supplies." },
+      { year: "197 AD", event: "Declared himself Emperor at Shouchun." }
+    ],
+    chapterIds: [5, 7, 9],
+    avatarSymbol: "👑",
+    quote: "With the Imperial Seal in hand, the throne is rightfully mine!"
   }
 ];
